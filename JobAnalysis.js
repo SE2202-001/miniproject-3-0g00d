@@ -30,43 +30,39 @@ class Job {
 // Variables to hold the data and UI elements
 let jobsData = [];
 const jobListings = document.getElementById('job-listings');
-const fileInput = document.getElementById('file-input');
 const levelFilter = document.getElementById('level-filter');
 const typeFilter = document.getElementById('type-filter');
 const skillFilter = document.getElementById('skill-filter');
 const sortTitle = document.getElementById('sort-title');
 const sortTime = document.getElementById('sort-time');
 
-// Load JSON Data
-fileInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file && file.type === 'application/json') {
-        const reader = new FileReader();
-        reader.onload = () => {
-            try {
-                const data = JSON.parse(reader.result);
-                jobsData = data.map(job => new Job(
-                    job["Job No"],
-                    job["Title"],
-                    job["Job Page Link"],
-                    job["Posted"],
-                    job["Type"],
-                    job["Level"],
-                    job["Estimated Time"],
-                    job["Skill"],
-                    job["Detail"]
-                ));
-                displayJobs(jobsData);
-                populateFilters(jobsData);
-            } catch (error) {
-                alert('Error loading or parsing the JSON file.');
-            }
-        };
-        reader.readAsText(file);
-    } else {
-        alert('Please upload a valid JSON file.');
-    }
-});
+// Load JSON Data from the file upwork_jobs.JSON
+fetch('upwork_jobs.JSON')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to load the JSON file.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        jobsData = data.map(job => new Job(
+            job["Job No"],
+            job["Title"],
+            job["Job Page Link"],
+            job["Posted"],
+            job["Type"],
+            job["Level"],
+            job["Estimated Time"],
+            job["Skill"],
+            job["Detail"]
+        ));
+        displayJobs(jobsData);
+        populateFilters(jobsData);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error loading or parsing the JSON file.');
+    });
 
 // Populate filter dropdowns based on data
 function populateFilters(jobs) {
