@@ -37,7 +37,7 @@ const sortTitle = document.getElementById('sort-title');
 const sortTime = document.getElementById('sort-time');
 
 // Load JSON Data from GitHub
-const githubRawURL = 'https://raw.githubusercontent.com/<username>/<repo-name>/<branch>/upwork_jobs.JSON';
+const githubRawURL = 'https://raw.githubusercontent.com/SE2202-001/miniproject-3-0g00d/main/upwork_jobs.JSON';
 
 fetch(githubRawURL)
     .then(response => {
