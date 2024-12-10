@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Listings</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Job Listings</h1>
+        
+        <!-- File Upload Section -->
+        <div class="file-upload">
+            <input type="file" id="file-input" accept=".json">
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filters">
+            <label for="level-filter">Job Level:</label>
+            <select id="level-filter">
+                <option value="">All Levels</option>
+            </select>
+
+            <label for="type-filter">Job Type:</label>
+            <select id="type-filter">
+                <option value="">All Types</option>
+            </select>
+
+            <label for="skill-filter">Skills:</label>
+            <select id="skill-filter">
+                <option value="">All Skills</option>
+            </select>
+        </div>
+
+        <!-- Sorting Section -->
+        <div class="sorting">
+            <label for="sort-title">Sort by Title:</label>
+            <select id="sort-title">
+                <option value="asc">A-Z</option>
+                <option value="desc">Z-A</option>
+            </select>
+
+            <label for="sort-time">Sort by Posted Time:</label>
+            <select id="sort-time">
+                <option value="asc">Oldest First</option>
+                <option value="desc">Newest First</option>
+            </select>
+        </div>
+
+        <!-- Job Listings -->
+        <div id="job-listings" class="job-listings"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
