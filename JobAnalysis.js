@@ -1,28 +1,28 @@
 // Job Class Definition
 class Job {
-    constructor(title, posted, type, level, skill, detail) {
+    constructor(jobNo, title, jobPageLink, posted, type, level, estimatedTime, skill, detail) {
+        this.jobNo = jobNo;
         this.title = title;
-        this.posted = new Date(posted);
+        this.jobPageLink = jobPageLink;
+        this.posted = posted; // Keeping it as a string for now (can be processed later)
         this.type = type;
         this.level = level;
+        this.estimatedTime = estimatedTime;
         this.skill = skill;
         this.detail = detail;
-    }
-
-    // Method to format posted date
-    getFormattedPostedTime() {
-        return this.posted.toLocaleDateString();
     }
 
     // Method to get full job details
     getDetails() {
         return `
-            <strong>Title:</strong> ${this.title}<br>
+            <strong>Job No:</strong> ${this.jobNo}<br>
+            <strong>Title:</strong> <a href="${this.jobPageLink}" target="_blank">${this.title}</a><br>
             <strong>Type:</strong> ${this.type}<br>
             <strong>Level:</strong> ${this.level}<br>
+            <strong>Estimated Time:</strong> ${this.estimatedTime}<br>
             <strong>Skills:</strong> ${this.skill}<br>
             <strong>Details:</strong> ${this.detail}<br>
-            <strong>Posted on:</strong> ${this.getFormattedPostedTime()}
+            <strong>Posted:</strong> ${this.posted}
         `;
     }
 }
@@ -45,7 +45,17 @@ fileInput.addEventListener('change', (event) => {
         reader.onload = () => {
             try {
                 const data = JSON.parse(reader.result);
-                jobsData = data.map(job => new Job(job.title, job.posted, job.type, job.level, job.skill, job.detail));
+                jobsData = data.map(job => new Job(
+                    job["Job No"],
+                    job["Title"],
+                    job["Job Page Link"],
+                    job["Posted"],
+                    job["Type"],
+                    job["Level"],
+                    job["Estimated Time"],
+                    job["Skill"],
+                    job["Detail"]
+                ));
                 displayJobs(jobsData);
                 populateFilters(jobsData);
             } catch (error) {
@@ -130,13 +140,37 @@ function sortJobs() {
         sortedJobs.sort((a, b) => b.title.localeCompare(a.title));
     }
 
+    // Sorting based on the "Posted" field
     if (sortTime.value === 'asc') {
-        sortedJobs.sort((a, b) => a.posted - b.posted);
+        sortedJobs.sort((a, b) => {
+            // Simplify the time comparison (e.g., convert "8 minutes ago" to actual minutes)
+            return convertTimeToMinutes(a.posted) - convertTimeToMinutes(b.posted);
+        });
     } else if (sortTime.value === 'desc') {
-        sortedJobs.sort((a, b) => b.posted - a.posted);
+        sortedJobs.sort((a, b) => {
+            return convertTimeToMinutes(b.posted) - convertTimeToMinutes(a.posted);
+        });
     }
 
     displayJobs(sortedJobs);
+}
+
+// Convert "Posted" time like "8 minutes ago" into actual minutes
+function convertTimeToMinutes(postedTime) {
+    const regex = /(\d+)\s([a-zA-Z]+)\sago/;
+    const match = postedTime.match(regex);
+    if (match) {
+        const quantity = parseInt(match[1]);
+        const unit = match[2].toLowerCase();
+        if (unit === 'minute' || unit === 'minutes') {
+            return quantity;
+        } else if (unit === 'hour' || unit === 'hours') {
+            return quantity * 60;
+        } else if (unit === 'day' || unit === 'days') {
+            return quantity * 1440; // 24 * 60
+        }
+    }
+    return 0;
 }
 
 // Add event listeners for filters and sorting
